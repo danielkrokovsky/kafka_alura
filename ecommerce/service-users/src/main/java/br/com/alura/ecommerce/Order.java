@@ -10,7 +10,7 @@ public class Order {
 	private final String email;
 	
 	public Order(String userId, String orderId, BigDecimal amount, String email) {
-		//super();
+		super();
 		this.userId = userId;
 		this.orderId = orderId;
 		this.amount = amount;
@@ -28,4 +28,9 @@ public class Order {
 	public BigDecimal getAmount() {
 		return amount;
 	}
+	
+	public String getEmail() {
+		return email;
+	}
+
 }
