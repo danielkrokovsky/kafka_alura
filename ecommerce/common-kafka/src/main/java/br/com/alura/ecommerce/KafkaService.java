@@ -15,25 +15,25 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 @SuppressWarnings({"rawtypes","unchecked"})
 public class KafkaService<T>  implements Closeable {
 	
-	private final KafkaConsumer<String, T> consumer;
+	private final KafkaConsumer<String, Message<T>> consumer;
 	
 	private final ConsumerFunction parse;
 
-	public KafkaService(String groupID, String topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+	public KafkaService(String groupID, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
 		
 		this(parse,groupID, type, properties);		
 		consumer.subscribe(Collections.singletonList(topic));
 
 	}
 
-	public KafkaService(String groupID, Pattern topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+	public KafkaService(String groupID, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
 		
 		this(parse,groupID, type, properties);
 		consumer.subscribe(topic);
 
 	}
 
-	private KafkaService(ConsumerFunction parse, String groupID, Class<T> type, Map<String, String> properties) {
+	private KafkaService(ConsumerFunction<T> parse, String groupID, Class<T> type, Map<String, String> properties) {
 		this.parse = parse;
 		this.consumer = new KafkaConsumer<>(getProperties(type ,groupID, properties));
 	}
@@ -69,7 +69,7 @@ public class KafkaService<T>  implements Closeable {
 		properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
 		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupID);
 		properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
-		properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
+		//properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
 		properties.putAll(overrideProperties);
 
 		return properties;
